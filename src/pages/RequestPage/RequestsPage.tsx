@@ -4,6 +4,7 @@ import { SelectWithIcon } from '@/components/common/select/SelectWithIcon/Select
 import { SelectBase } from '@/components/common/select/SelectBase/SelectBase'
 import { MyIcon } from '@/components/common/MyIcon/MyIcon'
 import { TextareaDefault } from '@/components/common/TextareaDefault/TextareaDefault'
+import { CheckboxDefault } from '@/components/common/CheckboxDefault/CheckboxDefault'
 
 type Form = {
   pharmacy: string
@@ -69,7 +70,6 @@ export const RequestsPage = () => {
           minH='70px'
         />
 
-        <Box h='50px'></Box>
         <TextareaDefault
           value={form.description}
           onChange={(v: string) => update('description', v)}
@@ -82,6 +82,11 @@ export const RequestsPage = () => {
           }
           minH='164px'
         />
+
+        <Box h='50px'></Box>
+        <CheckboxDefault checked={form.warranty} onChange={(v) => update('warranty', v)}>
+          Гарантийный случай?
+        </CheckboxDefault>
 
         <Box h='50px'></Box>
         <SelectWithIcon
