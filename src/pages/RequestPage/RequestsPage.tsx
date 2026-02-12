@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { SelectWithIcon } from '@/components/common/select/SelectWithIcon/SelectWithIcon'
 import { SelectBase } from '@/components/common/select/SelectBase/SelectBase'
 import { MyIcon } from '@/components/common/MyIcon/MyIcon'
+import { TextareaDefault } from '@/components/common/TextareaDefault/TextareaDefault'
 
 type Form = {
   pharmacy: string
@@ -59,6 +60,29 @@ export const RequestsPage = () => {
             },
           ]}
         />
+
+        <Box h='50px'></Box>
+        <TextareaDefault
+          value={form.theme}
+          onChange={(v: string) => update('theme', v)}
+          placeholder='Дайте заявке краткое название: например, сломался холодильник или не работает кондиционер'
+          minH='70px'
+        />
+
+        <Box h='50px'></Box>
+        <TextareaDefault
+          value={form.description}
+          onChange={(v: string) => update('description', v)}
+          placeholder={
+            `Кратко опишите проблему:\n\n` +
+            `  • что случилось?\n` +
+            `  • дата и время произошедшего?\n` +
+            `  • сколько длится проблема?\n` +
+            `  • насколько она влияет на вашу работу?`
+          }
+          minH='164px'
+        />
+
         <Box h='50px'></Box>
         <SelectWithIcon
           isMobile={Boolean(isMobile)}
