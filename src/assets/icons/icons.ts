@@ -13,6 +13,7 @@ import cross from './svg/cross.svg?raw'
 import img from './svg/img.svg?raw'
 import backArrow from './svg/backArrow.svg?raw'
 import arrowPriorityDown from './svg/arrowPriorityDown.svg?raw'
+import file from './svg/file.svg?raw'
 
 export const icons = {
   arrowDown,
@@ -30,4 +31,5 @@ export const icons = {
   img,
   backArrow,
   arrowPriorityDown,
+  file,
 }

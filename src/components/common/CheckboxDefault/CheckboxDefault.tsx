@@ -39,7 +39,6 @@ export const CheckboxDefault: React.FC<CheckboxDefaultProps> = ({
         color={checked ? 'text.primary' : 'transparent'}
         cursor='pointer'
         transition={`all ${animationTokens.seconds}`}
-        _hover={{ borderColor: 'text.primary' }}
       />
       <Checkbox.Label
         fontSize='14'
