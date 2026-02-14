@@ -1,4 +1,4 @@
-import { Box, BoxProps, Button, ButtonProps, HStack } from '@chakra-ui/react'
+import { Box, BoxProps, Button, ButtonProps, Flex } from '@chakra-ui/react'
 import { MyIcon } from '@/components/common/MyIcon/MyIcon'
 import { IconName } from '@/assets/icons/IconName'
 
@@ -26,11 +26,14 @@ export const ButtonDefault = ({
       minW='0'
       h='auto'
       p='8px 17px'
+      fontWeight='400'
+      fontSize='16px'
+      lineHeight='24px'
       bg='text.primary'
       _hover={{ opacity: 0.5 }}
       {...rest}
     >
-      <HStack justify='center' align='center' gap='0'>
+      <Flex justify='center' align='center' gap='0'>
         {iconName && (
           <Box
             display='inline-flex'
@@ -48,7 +51,7 @@ export const ButtonDefault = ({
         )}
         {text}
         {children}
-      </HStack>
+      </Flex>
     </Button>
   )
 }

@@ -7,6 +7,7 @@ import { TextareaDefault } from '@/components/common/TextareaDefault/TextareaDef
 import { CheckboxDefault } from '@/components/common/CheckboxDefault/CheckboxDefault'
 import { InputFile } from '@/components/common/InputFile/InputFile'
 import { ButtonDefault } from '@/components/common/ButtonDefault/ButtonDefault'
+import { DefaultModal } from '@/components/common/Modal/ModalDefault'
 
 type Form = {
   pharmacy: string
@@ -29,11 +30,25 @@ export const RequestsPage = () => {
     files: [],
   })
 
+  const [isOpenPopup, setIsOpenPopup] = useState(false)
+
   const update = <K extends keyof Form>(key: K, value: Form[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }))
   }
 
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const closeModal = () => {
+    setIsOpenPopup(false)
+  }
+
+  const openModal = () => {
+    setIsOpenPopup(true)
+  }
+
+  const submit = () => {
+    console.log(form)
+  }
+
+  const isMobile = Boolean(useBreakpointValue({ base: true, md: false }))
 
   return (
     <>
@@ -102,11 +117,42 @@ export const RequestsPage = () => {
         />
 
         <Box h='50px'></Box>
+        <ButtonDefault
+          iconSize={14}
+          iconName='plus'
+          color='text.btnLight'
+          colorIcon='text.btnLight'
+          p='7px 14px'
+          bg='text.primary'
+          text='Создать новую заявку'
+          onClick={openModal}
+        />
+        <DefaultModal
+          isOpen={isOpenPopup}
+          onClose={closeModal}
+          isMobile={isMobile}
+          title={'Создание заявки'}
+          footer={
+            <>
+              <ButtonDefault
+                text='Создать заявку'
+                p='8px 17px'
+                bg='text.primary'
+                onClick={submit}
+              ></ButtonDefault>
+              <ButtonDefault text='Отмена' onClick={closeModal} />
+            </>
+          }
+        >
+          <Box>Привет</Box>
+        </DefaultModal>
+
+        <Box h='50px'></Box>
         <InputFile value={form.files} onChange={(v) => update('files', v)} />
 
         <Box h='50px'></Box>
         <SelectWithIcon
-          isMobile={Boolean(isMobile)}
+          isMobile={isMobile}
           value={form.priority}
           placeholder='Выберите приоритет'
           onChange={(v) => update('priority', v)}
