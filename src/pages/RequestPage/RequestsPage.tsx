@@ -5,6 +5,8 @@ import { SelectBase } from '@/components/common/select/SelectBase/SelectBase'
 import { MyIcon } from '@/components/common/MyIcon/MyIcon'
 import { TextareaDefault } from '@/components/common/TextareaDefault/TextareaDefault'
 import { CheckboxDefault } from '@/components/common/CheckboxDefault/CheckboxDefault'
+import { InputFile } from '@/components/common/InputFile/InputFile'
+import { ButtonDefault } from '@/components/common/ButtonDefault/ButtonDefault'
 
 type Form = {
   pharmacy: string
@@ -87,6 +89,20 @@ export const RequestsPage = () => {
         <CheckboxDefault checked={form.warranty} onChange={(v) => update('warranty', v)}>
           Гарантийный случай?
         </CheckboxDefault>
+
+        <Box h='50px'></Box>
+        <ButtonDefault
+          iconSize={18}
+          iconName='cross'
+          opacity='0.5'
+          colorIcon='text.primary'
+          p='0'
+          bg='transparent'
+          _hover={{ opacity: '0.3' }}
+        />
+
+        <Box h='50px'></Box>
+        <InputFile value={form.files} onChange={(v) => update('files', v)} />
 
         <Box h='50px'></Box>
         <SelectWithIcon
