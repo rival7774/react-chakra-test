@@ -9,6 +9,7 @@ type Props = {
   colorIcon?: string
   wrapIcon?: BoxProps
   iconSize?: number
+  disabled?: boolean
 } & ButtonProps
 
 export const ButtonDefault = ({
@@ -18,6 +19,7 @@ export const ButtonDefault = ({
   colorIcon,
   wrapIcon,
   iconSize,
+  disabled,
   ...rest
 }: Props) => {
   return (
@@ -30,6 +32,7 @@ export const ButtonDefault = ({
       fontSize='16px'
       lineHeight='24px'
       bg='text.primary'
+      disabled={disabled}
       _hover={{ opacity: 0.5 }}
       {...rest}
     >

@@ -10,6 +10,7 @@ export type Props<T extends BaseOption> = {
   paddingTrigger?: string
   renderTrigger?: (selected: T | undefined) => React.ReactNode
   renderItem?: (option: T) => React.ReactNode
+  id?: string
 }
 
 export const SelectBase = <T extends BaseOption>({
@@ -43,6 +44,7 @@ export const SelectBase = <T extends BaseOption>({
           shift: 0,
         }}
         loopFocus={true}
+        overflow='hidden'
       >
         <Select.HiddenSelect />
 
@@ -63,7 +65,7 @@ export const SelectBase = <T extends BaseOption>({
               <Select.ValueText
                 color={value ? 'text.primary' : 'border.select'}
                 placeholder={placeholder}
-                fontSize='14px'
+                fontSize={{ base: '12px', md: '14px' }}
                 lineHeight='100%'
               />
             )}

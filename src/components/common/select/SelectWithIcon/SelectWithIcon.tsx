@@ -21,7 +21,12 @@ export const SelectWithIcon = React.memo(
         options={options}
         renderTrigger={(option) => {
           return option?.value ? (
-            <Box display='flex' p='13px 16px' alignItems='center' width='100%'>
+            <Box
+              display='flex'
+              p={{ base: '8px 16px', md: '13px 16px' }}
+              alignItems='center'
+              width='100%'
+            >
               <Box display='inline-flex' justifyContent='center' alignItems='center' mr='8px'>
                 {option?.icon}
               </Box>
@@ -30,6 +35,7 @@ export const SelectWithIcon = React.memo(
                 flexDirection={isMobile ? 'column' : 'row'}
                 fontSize='12px'
                 lineHeight='100%'
+                gap={{ base: '6px', md: '0' }}
               >
                 <Box fontWeight='500' color='text.primary'>
                   {option?.label}:{'\u00A0'}
@@ -42,10 +48,13 @@ export const SelectWithIcon = React.memo(
           ) : (
             <Text
               lineClamp='1'
-              p='13px 16px'
+              p={{ base: '8px 16px', md: '13px 16px' }}
               fontSize='12px'
               lineHeight='100%'
               color='border.select'
+              minH={{ base: '46px', md: '15px' }}
+              display='flex'
+              alignItems='center'
             >
               {option?.label}
             </Text>

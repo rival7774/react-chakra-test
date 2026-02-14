@@ -1,20 +1,25 @@
 import { Box, FileUpload, Flex } from '@chakra-ui/react'
 import { MyIcon } from '@/components/common/MyIcon/MyIcon'
 import { FilePreviewGrid } from '@/components/common/FilePreviewGrid/FilePreviewGrid'
+import { useRef } from 'react'
 
 type Props = {
-  value: File[]
+  files: File[]
   onChange: (files: File[]) => void
+  id?: string
+  title?: string
 }
 
-export const InputFile = ({ value, onChange }: Props) => {
+export const InputFile = ({ files, onChange, id, title }: Props) => {
+  const inputRef = useRef<HTMLInputElement>(null)
+
   const handleRemoveFile = (fileName: string) => {
-    onChange(value.filter((f) => f.name !== fileName))
+    onChange(files.filter((f) => f.name !== fileName))
   }
 
-  const addFiles = (files: FileList | File[]) => {
-    const newFiles = Array.from(files)
-    const filterDouble = [...value, ...newFiles].filter(
+  const addFiles = (newFiles: FileList | File[]) => {
+    const arrFiles = Array.from(newFiles)
+    const filterDouble = [...files, ...arrFiles].filter(
       (f, i, arr) =>
         arr.findIndex((x) => x.name === f.name && x.lastModified === f.lastModified) === i
     )
@@ -36,6 +41,10 @@ export const InputFile = ({ value, onChange }: Props) => {
     e.preventDefault()
   }
 
+  const handleClickDropzone = () => {
+    inputRef.current?.click()
+  }
+
   return (
     <FileUpload.Root
       maxW='xl'
@@ -45,8 +54,14 @@ export const InputFile = ({ value, onChange }: Props) => {
       w='100%'
       h='100px'
     >
-      <FileUpload.HiddenInput multiple onChange={handleFilesSelected} />
-      <Flex gap='8px' h='100%' justify={value.length ? 'space-between' : 'stretch'}>
+      <FileUpload.HiddenInput
+        ref={inputRef}
+        multiple
+        onChange={handleFilesSelected}
+        id={id}
+        aria-hidden={false}
+      />
+      <Flex gap='8px' h='100%' justify={files.length ? 'space-between' : 'stretch'}>
         <FileUpload.Dropzone
           onDrop={handleDrop}
           onDragOver={handleDragOver}
@@ -58,15 +73,16 @@ export const InputFile = ({ value, onChange }: Props) => {
           flexDirection='column'
           borderColor='border.select'
           cursor='pointer'
+          onClick={handleClickDropzone}
         >
           <FileUpload.DropzoneContent>
             <Box color='text.primary' lineHeight='100%' fontWeight='300'>
-              Выберите или перетащите фото или файл
+              {title}
             </Box>
           </FileUpload.DropzoneContent>
           <MyIcon name='img' color='#000' />
         </FileUpload.Dropzone>
-        {value.length > 0 && <FilePreviewGrid files={value} onRemove={handleRemoveFile} />}
+        {files.length > 0 && <FilePreviewGrid files={files} onRemove={handleRemoveFile} />}
       </Flex>
     </FileUpload.Root>
   )

@@ -1,5 +1,4 @@
 import {
-  Button,
   DialogBackdrop,
   DialogBody,
   DialogContent,
@@ -11,6 +10,7 @@ import {
   HStack,
 } from '@chakra-ui/react'
 import { ButtonDefault } from '@/components/common/ButtonDefault/ButtonDefault'
+import { useEffect, useRef } from 'react'
 
 type RequestModalProps = {
   isOpen: boolean
@@ -19,6 +19,7 @@ type RequestModalProps = {
   isMobile: boolean
   children?: React.ReactNode
   footer?: React.ReactNode
+  initialFocusRef?: React.RefObject<HTMLElement>
 }
 
 export const DefaultModal = ({
@@ -28,14 +29,28 @@ export const DefaultModal = ({
   isMobile,
   children,
   footer,
+  initialFocusRef,
 }: RequestModalProps) => {
+  const bodyRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (isOpen && bodyRef.current) {
+      const firstFocusable = bodyRef.current.querySelector<HTMLElement>(
+        'input, select, textarea, button'
+      )
+      firstFocusable?.focus()
+    }
+  }, [isOpen])
+
   return (
     <DialogRoot
       open={isOpen}
       onOpenChange={(e) => {
         if (!e.open) onClose()
       }}
-      placement={'center'}
+      initialFocusEl={() => initialFocusRef?.current ?? null}
+      // @ts-expect-error: Chakra UI официально не поддерживает 'end', но мы используем slide-in-right
+      placement={isMobile ? 'end' : 'center'}
       motionPreset={isMobile ? 'slide-in-right' : undefined}
       size={isMobile ? 'full' : undefined}
       scrollBehavior='inside'
@@ -48,7 +63,7 @@ export const DefaultModal = ({
           borderRadius={isMobile ? '0' : '15px'}
           p={isMobile ? '0' : '30px 36px 40px'}
           color='text.primary'
-          gap='32px'
+          overflow='hidden'
         >
           <HStack justifyContent='space-between' minH='29px'>
             {isMobile ? (
@@ -60,9 +75,6 @@ export const DefaultModal = ({
                 borderBottom='1px solid'
                 borderColor='border.headerPopup'
                 pb='24px'
-                fontSize='20px'
-                lineHeight='24px'
-                fontWeight='600'
                 flex={1}
               >
                 <ButtonDefault
@@ -73,7 +85,9 @@ export const DefaultModal = ({
                   p='0'
                   bg='transparent'
                 />
-                <DialogTitle>{title}</DialogTitle>
+                <DialogTitle fontSize='20px' lineHeight='24px' fontWeight='600'>
+                  {title}
+                </DialogTitle>
               </DialogHeader>
             ) : (
               <>
@@ -87,22 +101,9 @@ export const DefaultModal = ({
                   fontWeight='500'
                   flex={1}
                 >
-                  <DialogTitle>{title}</DialogTitle>
+                  <DialogTitle mb='32px'>{title}</DialogTitle>
                 </DialogHeader>
 
-                <Button
-                  onClick={onClose}
-                  w='18px'
-                  h='18px'
-                  minW='18px'
-                  minH='18px'
-                  p={0}
-                  m={0}
-                  variant='ghost'
-                  border='none'
-                  _hover={{ bg: 'transparent', border: 'none', opacity: '.5' }}
-                  _focus={{ boxShadow: 'none', outline: 'none' }}
-                ></Button>
                 <ButtonDefault
                   onClick={onClose}
                   iconSize={18}
@@ -111,8 +112,7 @@ export const DefaultModal = ({
                   colorIcon='text.primary'
                   p='0'
                   bg='transparent'
-                  _hover={{ bg: 'transparent', border: 'none', opacity: '0.3' }}
-                  _focus={{ boxShadow: 'none', outline: 'none' }}
+                  _hover={{ opacity: '0.3' }}
                 />
               </>
             )}
@@ -120,7 +120,13 @@ export const DefaultModal = ({
 
           <DialogBody p={0}>{children}</DialogBody>
 
-          <DialogFooter justifyContent='start' flexDir='row' alignItems='center' p={0} gap='17px'>
+          <DialogFooter
+            justifyContent='start'
+            alignItems={{ base: 'stretch', md: 'center' }}
+            flexDir={{ base: 'column', md: 'row' }}
+            p={{ base: '10px', md: '0' }}
+            gap={{ base: '10px', md: '17px' }}
+          >
             {footer}
           </DialogFooter>
         </DialogContent>
