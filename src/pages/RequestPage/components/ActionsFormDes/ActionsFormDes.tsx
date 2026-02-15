@@ -14,6 +14,7 @@ export const ActionsFormDes = ({ submit, closeModal }: Props) => {
         bg='text.primary'
         type='submit'
         form='requestForm'
+        borderRadius='5px'
         onClick={submit}
       />
       <ButtonDefault
@@ -22,6 +23,7 @@ export const ActionsFormDes = ({ submit, closeModal }: Props) => {
         borderColor='text.primary'
         color='text.primary'
         p='8px 10px'
+        borderRadius='5px'
         text='Отмена'
         onClick={closeModal}
       />
