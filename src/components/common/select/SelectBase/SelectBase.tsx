@@ -1,4 +1,4 @@
-import { Box, createListCollection, Portal, Select } from '@chakra-ui/react'
+import { Box, createListCollection, Select } from '@chakra-ui/react'
 import { MyIcon } from '@/components/common/MyIcon/MyIcon'
 import { BaseOption } from '@/components/common/select/types'
 
@@ -75,22 +75,20 @@ export const SelectBase = <T extends BaseOption>({
           </Select.IndicatorGroup>
         </Select.Control>
 
-        <Portal>
-          <Select.Positioner>
-            <Select.Content>
-              {collectionOptions.items.map((option) => (
-                <Select.Item
-                  key={option.value}
-                  color={option.value === '' ? 'border.select' : 'text.primary'}
-                  item={option}
-                  cursor='pointer'
-                >
-                  {renderItem ? renderItem(option) : option.label}
-                </Select.Item>
-              ))}
-            </Select.Content>
-          </Select.Positioner>
-        </Portal>
+        <Select.Positioner>
+          <Select.Content>
+            {collectionOptions.items.map((option) => (
+              <Select.Item
+                key={option.value}
+                color={option.value === '' ? 'border.select' : 'text.primary'}
+                item={option}
+                cursor='pointer'
+              >
+                {renderItem ? renderItem(option) : option.label}
+              </Select.Item>
+            ))}
+          </Select.Content>
+        </Select.Positioner>
       </Select.Root>
     </Box>
   )

@@ -28,6 +28,7 @@ export const ButtonDefault = ({
       minW='0'
       h='auto'
       p='8px 17px'
+      borderRadius='4px'
       fontWeight='400'
       fontSize='16px'
       lineHeight='24px'

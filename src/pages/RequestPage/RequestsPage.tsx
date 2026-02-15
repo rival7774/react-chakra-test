@@ -62,7 +62,7 @@ export const RequestsPage = () => {
     if (!form.theme.trim()) {
       newErrors.theme = 'Тема заявки обязательна'
     }
-    
+
     return Object.keys(newErrors).length === 0
   }
 
@@ -109,12 +109,14 @@ export const RequestsPage = () => {
                     iconName='plus'
                     bg='text.btnLight'
                     p='13px'
+                    borderRadius='5px'
                     color='text.primary'
                   />
                   <ButtonDefault
                     text='Создать заявку'
                     disabled={!form.theme.trim()}
                     p='13px'
+                    borderRadius='5px'
                     bg='text.primary'
                     type='submit'
                     form='requestForm'
