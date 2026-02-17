@@ -14,6 +14,9 @@ import img from './svg/img.svg?raw'
 import backArrow from './svg/backArrow.svg?raw'
 import arrowPriorityDown from './svg/arrowPriorityDown.svg?raw'
 import file from './svg/file.svg?raw'
+import statusOk from './svg/statusOk.svg?raw'
+import time from './svg/time.svg?raw'
+import error from './svg/error.svg?raw'
 
 export const icons = {
   arrowDown,
@@ -32,4 +35,7 @@ export const icons = {
   backArrow,
   arrowPriorityDown,
   file,
+  statusOk,
+  time,
+  error,
 }
