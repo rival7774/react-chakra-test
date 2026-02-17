@@ -10,7 +10,7 @@ import {
   HStack,
 } from '@chakra-ui/react'
 import { ButtonDefault } from '@/components/common/ButtonDefault/ButtonDefault'
-import { useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 type RequestModalProps = {
   isOpen: boolean
@@ -36,7 +36,7 @@ export const DefaultModal = ({
   useEffect(() => {
     if (isOpen && bodyRef.current) {
       const firstFocusable = bodyRef.current.querySelector<HTMLElement>(
-        'input, select, textarea, button'
+        'input, select, textarea, button, [tabindex]:not([tabindex="-1"])'
       )
       firstFocusable?.focus()
     }
@@ -65,60 +65,64 @@ export const DefaultModal = ({
           color='text.primary'
           overflow='hidden'
         >
-          <HStack justifyContent='space-between' minH='29px'>
-            {isMobile ? (
-              <DialogHeader
-                display='flex'
-                alignItems='center'
-                gap='14px'
-                p='24px 16px'
-                borderBottom='1px solid'
-                borderColor='border.headerPopup'
-                pb='24px'
-                flex={1}
-              >
-                <ButtonDefault
-                  onClick={onClose}
-                  iconSize={16}
-                  iconName='backArrow'
-                  colorIcon='text.primary'
-                  p='0'
-                  bg='transparent'
-                />
-                <DialogTitle fontSize='20px' lineHeight='24px' fontWeight='600'>
-                  {title}
-                </DialogTitle>
-              </DialogHeader>
-            ) : (
-              <>
-                <DialogHeader
+          <DialogHeader p={isMobile ? '0' : 0}>
+            <HStack justifyContent='space-between' minH='29px' w='100%'>
+              {isMobile ? (
+                <HStack
                   display='flex'
                   alignItems='center'
-                  gap={2}
-                  p={0}
-                  fontSize='24px'
-                  lineHeight='100%'
-                  fontWeight='500'
+                  gap='14px'
+                  p='24px 16px'
+                  borderBottom='1px solid'
+                  borderColor='border.headerPopup'
+                  pb='24px'
                   flex={1}
                 >
-                  <DialogTitle mb='32px'>{title}</DialogTitle>
-                </DialogHeader>
+                  <ButtonDefault
+                    onClick={onClose}
+                    iconSize={16}
+                    iconName='backArrow'
+                    colorIcon='text.primary'
+                    p='0'
+                    bg='transparent'
+                  />
+                  <DialogTitle fontSize='20px' lineHeight='24px' fontWeight='600'>
+                    {title}
+                  </DialogTitle>
+                </HStack>
+              ) : (
+                <>
+                  <HStack
+                    display='flex'
+                    alignItems='center'
+                    gap={2}
+                    p={0}
+                    fontSize='24px'
+                    lineHeight='100%'
+                    fontWeight='500'
+                    flex={1}
+                  >
+                    <DialogTitle mb='32px'>{title}</DialogTitle>
+                  </HStack>
 
-                <ButtonDefault
-                  onClick={onClose}
-                  iconSize={18}
-                  iconName='cross'
-                  opacity='0.5'
-                  colorIcon='text.primary'
-                  p='0'
-                  bg='transparent'
-                  _hover={{ opacity: '0.3' }}
-                />
-              </>
-            )}
-          </HStack>
+                  <ButtonDefault
+                    onClick={onClose}
+                    iconSize={18}
+                    iconName='cross'
+                    opacity='0.5'
+                    colorIcon='text.primary'
+                    p='0'
+                    bg='transparent'
+                    _hover={{ opacity: '0.3' }}
+                  />
+                </>
+              )}
+            </HStack>
+          </DialogHeader>
 
-          <DialogBody p={0}>{children}</DialogBody>
+          <DialogBody ref={bodyRef} p={0} position='relative'>
+            {children}
+          </DialogBody>
 
           <DialogFooter
             justifyContent='start'

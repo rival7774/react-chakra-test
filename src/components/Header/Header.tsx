@@ -21,7 +21,12 @@ export const Header = () => {
       p={['16px 26px 19px 16px', null, '20px 34px 20px 130px']}
       alignItems={['start', null, 'center']}
       minHeight={['auto', null, '86px']}
-      borderBottom='1px solid #D9E1EC'
+      borderBottom='1px solid'
+      borderColor='border.default'
+      position='sticky'
+      top='0'
+      zIndex={100}
+      bg='surface.white'
     >
       <DesktopNav
         currentSelectNav={currentSelectNav}

@@ -1,6 +1,7 @@
 import { Flex } from '@chakra-ui/react'
 import { NavLink, NavLinkProps } from 'react-router-dom'
 import { IconName } from '@/assets/icons/IconName'
+import { animationTokens } from '@/theme/animationTokens'
 
 type NavButtonProps = {
   to: string
@@ -22,6 +23,7 @@ export const NavButton = ({ to, text, ...rest }: NavButtonProps) => {
             fontWeight='400'
             p='0'
             bg='transparent'
+            transition={`${animationTokens.seconds}`}
             _hover={{ bg: 'transparent', color: 'text.primary' }}
           >
             {text}

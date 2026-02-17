@@ -43,8 +43,8 @@ export const ButtonDefault = ({
             display='inline-flex'
             justifyContent='center'
             alignItems='center'
-            {...wrapIcon}
             mr={!text && !children ? '0' : '10px'}
+            {...wrapIcon}
           >
             <MyIcon
               size={iconSize ? `${iconSize}px` : undefined}
