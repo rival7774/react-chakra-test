@@ -37,7 +37,6 @@ const statusBadgeProps = (s: Request['status']) => {
   }
 }
 
-// ровно как в RequestsTable
 const priorityView = (
   p: Request['priority']
 ): {
