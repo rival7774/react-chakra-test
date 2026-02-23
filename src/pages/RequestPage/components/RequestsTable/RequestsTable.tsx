@@ -1,63 +1,12 @@
 import { Badge, Box, Flex, HStack, Table, Text } from '@chakra-ui/react'
 import { MyIcon } from '@/components/common/MyIcon/MyIcon'
 import { Request } from '../../types/Request'
-import { ComponentProps } from 'react'
-
-type TimeIcon = ComponentProps<typeof MyIcon>['name']
-type TimeState = 'ok' | 'error' | 'none' | undefined
-
-const statusLabel: Record<Request['status'], string> = {
-  new: 'Новая',
-  inProgress: 'В работе',
-  done: 'Готово',
-  closed: 'Закрыто',
-  paused: 'На паузе',
-  rejected: 'Отклонена',
-  review: 'На рассмотрении',
-  waitingParts: 'Ожидают запчасти',
-}
-
-const statusBadgeProps = (s: Request['status']) => {
-  const colorDefault = 'text.primary'
-
-  switch (s) {
-    case 'new':
-      return { bg: 'status.newBg', color: colorDefault }
-    case 'inProgress':
-      return { bg: 'status.inProgressBg', color: colorDefault }
-    case 'done':
-      return { bg: 'status.doneBg', color: colorDefault }
-    case 'closed':
-      return { bg: 'text.btnLight', color: colorDefault }
-    case 'paused':
-      return {
-        bg: 'surface.white',
-        color: colorDefault,
-        border: '1px solid',
-        borderColor: 'surface.black',
-      }
-    default:
-      return { bg: 'surface.white', color: colorDefault }
-  }
-}
-
-const priorityView = (
-  p: Request['priority']
-): {
-  icon: 'twoArrowsUp' | 'arrowUp' | 'square' | 'arrowPriorityDown'
-  colorToken: 'icon.up' | 'icon.square' | 'icon.down'
-} => {
-  switch (p) {
-    case 'Критич.':
-      return { icon: 'twoArrowsUp', colorToken: 'icon.up' }
-    case 'Высокий':
-      return { icon: 'arrowUp', colorToken: 'icon.up' }
-    case 'Средний':
-      return { icon: 'square', colorToken: 'icon.square' }
-    case 'Низкий':
-      return { icon: 'arrowPriorityDown', colorToken: 'icon.down' }
-  }
-}
+import {
+  getPriorityView,
+  getStatusBadgeProps,
+  getTimeView,
+  requestStatusLabel,
+} from '../../utils/requestView'
 
 const HeaderCell = ({ title }: { title: string }) => (
   <Flex align='center' gap='8px'>
@@ -110,56 +59,39 @@ export const RequestsTable = ({ data }: { data: Request[] }) => {
         </Table.Header>
 
         <Table.Body>
-          {data.map((r) => {
-            const d = new Date(r.createdAt)
-            const date = d.toLocaleDateString('ru-RU')
-            const time = d.toLocaleTimeString('ru-RU', {
+          {data.map((request) => {
+            const createdAt = new Date(request.createdAt)
+            const date = createdAt.toLocaleDateString('ru-RU')
+            const time = createdAt.toLocaleTimeString('ru-RU', {
               hour: '2-digit',
               minute: '2-digit',
               second: '2-digit',
             })
 
-            const pr = priorityView(r.priority)
-
-            const showReactionIcon = Boolean(r.reaction)
-            const showResolutionIcon = Boolean(r.resolution)
-
-            const getTimeView = (state: TimeState): { icon: TimeIcon; color: string } => {
-              if (state === 'error') {
-                return { icon: 'error', color: 'icon.up' }
-              }
-
-              if (state === 'ok') {
-                return { icon: 'statusOk', color: 'icon.ok' }
-              }
-
-              return { icon: 'time', color: 'text.primary' }
-            }
-
-            const reactionView = getTimeView(r.reactionState)
-            const resolutionView = getTimeView(r.resolutionState)
+            const priority = getPriorityView(request.priority)
+            const reactionView = getTimeView(request.reactionState)
+            const resolutionView = getTimeView(request.resolutionState)
 
             return (
               <Table.Row
-                key={r.id}
+                key={request.id}
                 borderBottom='1px solid'
                 borderColor='border.default'
                 _hover={{ bg: 'border.default' }}
               >
-                {/* № */}
                 <Table.Cell
                   fontSize='14px'
                   lineHeight='24px'
                   color='text.primary'
                   whiteSpace='nowrap'
-                  opacity={r.id ? 1 : 0.3}
+                  opacity={request.id ? 1 : 0.3}
                   p='8px 10px'
                 >
-                  {r.id || '—'}
+                  {request.id || '—'}
                 </Table.Cell>
-                {/* Аптека */}
+
                 <Table.Cell p='8px 10px'>
-                  {r.pharmacyNo && r.pharmacyTitle ? (
+                  {request.pharmacyNo && request.pharmacyTitle ? (
                     <HStack gap='10px'>
                       <Badge
                         bg='text.btnLight'
@@ -169,10 +101,10 @@ export const RequestsTable = ({ data }: { data: Request[] }) => {
                         fontSize='12px'
                         fontWeight='600'
                       >
-                        {r.pharmacyNo}
+                        {request.pharmacyNo}
                       </Badge>
                       <Text fontSize='14px' color='text.primary' lineClamp={1}>
-                        {r.pharmacyTitle}
+                        {request.pharmacyTitle}
                       </Text>
                     </HStack>
                   ) : (
@@ -181,9 +113,9 @@ export const RequestsTable = ({ data }: { data: Request[] }) => {
                     </Text>
                   )}
                 </Table.Cell>
-                {/* Создана */}
+
                 <Table.Cell p='8px 10px'>
-                  {r.createdAt ? (
+                  {request.createdAt ? (
                     <Flex gap='6px'>
                       <Text fontSize='14px' color='text.primary'>
                         {date}
@@ -199,15 +131,18 @@ export const RequestsTable = ({ data }: { data: Request[] }) => {
                     </Text>
                   )}
                 </Table.Cell>
-                {/* Приоритет */}
+
                 <Table.Cell p='8px 10px'>
-                  {r.priority ? (
+                  {request.priority ? (
                     <HStack gap='12px'>
-                      <Box color={pr.colorToken}>
-                        <MyIcon name={pr.icon} size={pr.icon === 'arrowUp' ? '12px' : '14px'} />
+                      <Box color={priority.colorToken}>
+                        <MyIcon
+                          name={priority.icon}
+                          size={priority.icon === 'arrowUp' ? '12px' : '14px'}
+                        />
                       </Box>
                       <Text fontSize='12px' color='text.primary' opacity={0.4} fontWeight='500'>
-                        {r.priority}
+                        {request.priority}
                       </Text>
                     </HStack>
                   ) : (
@@ -216,51 +151,48 @@ export const RequestsTable = ({ data }: { data: Request[] }) => {
                     </Text>
                   )}
                 </Table.Cell>
-                {/* Тема */}
-                <Table.Cell p='8px 10px'>
-                  <Text
-                    fontSize='14px'
-                    color='text.primary'
-                    lineClamp={1}
-                    opacity={r.theme ? 1 : 0.3}
-                  >
-                    {r.theme || '—'}
-                  </Text>
-                </Table.Cell>
-                {/* Категория */}
-                <Table.Cell p='8px 10px'>
-                  <Text
-                    fontSize='14px'
-                    color='text.primary'
-                    lineClamp={1}
-                    opacity={r.category ? 1 : 0.3}
-                  >
-                    {r.category || '—'}
-                  </Text>
-                </Table.Cell>
-                {/* Техник */}
-                <Table.Cell p='8px 10px'>
-                  <Text
-                    fontSize='14px'
-                    opacity={r.technician ? 1 : 0.3}
-                    color='text.primary'
-                    lineClamp={1}
-                  >
-                    {r.technician || '—'}
-                  </Text>
-                </Table.Cell>
-                {/* Реакция */}
-                <Table.Cell p='8px 10px'>
-                  {r.reaction ? (
-                    <HStack gap='4px'>
-                      {showReactionIcon ? (
-                        <Box color={reactionView.color}>
-                          <MyIcon name={reactionView.icon} size='14px' />
-                        </Box>
-                      ) : null}
 
+                <Table.Cell p='8px 10px'>
+                  <Text
+                    fontSize='14px'
+                    color='text.primary'
+                    lineClamp={1}
+                    opacity={request.theme ? 1 : 0.3}
+                  >
+                    {request.theme || '—'}
+                  </Text>
+                </Table.Cell>
+
+                <Table.Cell p='8px 10px'>
+                  <Text
+                    fontSize='14px'
+                    color='text.primary'
+                    lineClamp={1}
+                    opacity={request.category ? 1 : 0.3}
+                  >
+                    {request.category || '—'}
+                  </Text>
+                </Table.Cell>
+
+                <Table.Cell p='8px 10px'>
+                  <Text
+                    fontSize='14px'
+                    opacity={request.technician ? 1 : 0.3}
+                    color='text.primary'
+                    lineClamp={1}
+                  >
+                    {request.technician || '—'}
+                  </Text>
+                </Table.Cell>
+
+                <Table.Cell p='8px 10px'>
+                  {request.reaction ? (
+                    <HStack gap='4px'>
+                      <Box color={reactionView.color}>
+                        <MyIcon name={reactionView.icon} size='14px' />
+                      </Box>
                       <Text fontSize='14px' color={reactionView.color}>
-                        {r.reaction}
+                        {request.reaction}
                       </Text>
                     </HStack>
                   ) : (
@@ -269,21 +201,16 @@ export const RequestsTable = ({ data }: { data: Request[] }) => {
                     </Text>
                   )}
                 </Table.Cell>
-                {/* Решение */}
-                <Table.Cell p='8px 10px'>
-                  {r.resolution ? (
-                    <HStack gap='4px'>
-                      {showResolutionIcon ? (
-                        <Box color={resolutionView.color}>
-                          <MyIcon name={resolutionView.icon} size='14px' />
-                        </Box>
-                      ) : null}
 
-                      <Text
-                        fontSize='14px'
-                        color={r.resolution ? resolutionView.color : 'text.placeholderSearch'}
-                      >
-                        {r.resolution}
+                <Table.Cell p='8px 10px'>
+                  {request.resolution ? (
+                    <HStack gap='4px'>
+                      <Box color={resolutionView.color}>
+                        <MyIcon name={resolutionView.icon} size='14px' />
+                      </Box>
+
+                      <Text fontSize='14px' color={resolutionView.color}>
+                        {request.resolution}
                       </Text>
                     </HStack>
                   ) : (
@@ -292,23 +219,17 @@ export const RequestsTable = ({ data }: { data: Request[] }) => {
                     </Text>
                   )}
                 </Table.Cell>
-                {/* Статус */}
+
                 <Table.Cell p='8px 10px'>
-                  {r.status ? (
-                    <Badge
-                      borderRadius='4px'
-                      p='2px 6px'
-                      fontSize='14px'
-                      lineHeight='20px'
-                      {...statusBadgeProps(r.status)}
-                    >
-                      {statusLabel[r.status]}
-                    </Badge>
-                  ) : (
-                    <Text fontSize='14px' color='text.primary' opacity={0.3}>
-                      —
-                    </Text>
-                  )}
+                  <Badge
+                    borderRadius='4px'
+                    p='2px 6px'
+                    fontSize='14px'
+                    lineHeight='20px'
+                    {...getStatusBadgeProps(request.status)}
+                  >
+                    {requestStatusLabel[request.status]}
+                  </Badge>
                 </Table.Cell>
               </Table.Row>
             )
