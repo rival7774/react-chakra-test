@@ -1,6 +1,6 @@
-import { Box, createListCollection, Select } from '@chakra-ui/react'
 import { MyIcon } from '@/components/common/MyIcon/MyIcon'
 import { BaseOption } from '@/components/common/select/types'
+import { Box, createListCollection, Select } from '@chakra-ui/react'
 
 export type Props<T extends BaseOption> = {
   value?: string
@@ -39,12 +39,12 @@ export const SelectBase = <T extends BaseOption>({
         collection={collectionOptions}
         positioning={{
           sameWidth: true,
-          gutter: 0,
+          gutter: 2,
           flip: false,
           shift: 0,
+          slide: false,
         }}
         loopFocus={true}
-        overflow='hidden'
       >
         <Select.HiddenSelect />
 
@@ -70,13 +70,23 @@ export const SelectBase = <T extends BaseOption>({
               />
             )}
           </Select.Trigger>
-          <Select.IndicatorGroup p='0' right='19.5px'>
-            <MyIcon name='arrowDown' size='17px' color='text.primary' />
+          <Select.IndicatorGroup
+            p='0'
+            right='19.5px'
+          >
+            <MyIcon
+              name='arrowDown'
+              size='17px'
+              color='text.primary'
+            />
           </Select.IndicatorGroup>
         </Select.Control>
 
         <Select.Positioner>
-          <Select.Content>
+          <Select.Content
+            w='calc(var(--reference-width) - 2px)'
+            ml='1px'
+          >
             {collectionOptions.items.map((option) => (
               <Select.Item
                 key={option.value}
