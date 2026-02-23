@@ -1,59 +1,12 @@
 import { Badge, Box, Flex, HStack, Text } from '@chakra-ui/react'
 import { MyIcon } from '@/components/common/MyIcon/MyIcon'
 import { Request } from '../../types/Request'
-
-const statusLabel: Record<Request['status'], string> = {
-  new: 'Новая',
-  inProgress: 'В работе',
-  done: 'Готово',
-  closed: 'Закрыто',
-  paused: 'На паузе',
-  rejected: 'Отклонена',
-  review: 'На рассмотрении',
-  waitingParts: 'Ожидают запчасти',
-}
-
-const statusBadgeProps = (s: Request['status']) => {
-  const colorDefault = 'text.primary'
-
-  switch (s) {
-    case 'new':
-      return { bg: 'status.newBg', color: colorDefault }
-    case 'inProgress':
-      return { bg: 'status.inProgressBgMobile', color: colorDefault }
-    case 'done':
-      return { bg: 'status.doneBg', color: colorDefault }
-    case 'closed':
-      return { bg: 'status.closedBg', color: colorDefault }
-    case 'paused':
-      return {
-        bg: 'surface.white',
-        color: colorDefault,
-        border: '1px solid',
-        borderColor: 'surface.black',
-      }
-    default:
-      return { bg: 'surface.white', color: colorDefault }
-  }
-}
-
-const priorityView = (
-  p: Request['priority']
-): {
-  icon: 'twoArrowsUp' | 'arrowUp' | 'square' | 'arrowPriorityDown'
-  colorToken: 'icon.up' | 'icon.square' | 'icon.down'
-} => {
-  switch (p) {
-    case 'Критич.':
-      return { icon: 'twoArrowsUp', colorToken: 'icon.up' }
-    case 'Высокий':
-      return { icon: 'arrowUp', colorToken: 'icon.up' }
-    case 'Средний':
-      return { icon: 'square', colorToken: 'icon.square' }
-    case 'Низкий':
-      return { icon: 'arrowPriorityDown', colorToken: 'icon.down' }
-  }
-}
+import {
+  getPriorityView,
+  getStatusBadgeProps,
+  getTimeView,
+  requestStatusLabel,
+} from '../../utils/requestView'
 
 const getGroupLabel = (dateStr: string) => {
   const date = new Date(dateStr)
@@ -75,10 +28,10 @@ const orderWeight = (label: string) => {
 
 export const RequestsMobileList = ({ data }: { data: Request[] }) => {
   const grouped = data.reduce(
-    (acc, r) => {
-      const label = getGroupLabel(r.createdAt)
+    (acc, request) => {
+      const label = getGroupLabel(request.createdAt)
       if (!acc[label]) acc[label] = []
-      acc[label].push(r)
+      acc[label].push(request)
       return acc
     },
     {} as Record<string, Request[]>
@@ -106,25 +59,13 @@ export const RequestsMobileList = ({ data }: { data: Request[] }) => {
           </Text>
 
           <Flex direction='column' gap='12px'>
-            {items.map((r) => {
-              const pr = priorityView(r.priority)
-
-              const resolutionIcon =
-                r.resolutionState === 'ok'
-                  ? 'statusOk'
-                  : r.resolutionState === 'error'
-                    ? 'error'
-                    : 'time'
-              const resolutionColor =
-                r.resolutionState === 'ok'
-                  ? 'icon.ok'
-                  : r.resolutionState === 'error'
-                    ? 'icon.up'
-                    : 'text.primary'
+            {items.map((request) => {
+              const priority = getPriorityView(request.priority)
+              const resolutionView = getTimeView(request.resolutionState)
 
               return (
                 <Box
-                  key={r.id}
+                  key={request.id}
                   bg='surface.white'
                   border='1px solid'
                   borderColor='border.default'
@@ -133,17 +74,16 @@ export const RequestsMobileList = ({ data }: { data: Request[] }) => {
                   cursor='pointer'
                   _hover={{ bg: 'border.default' }}
                 >
-                  {/* 1 строка: тема + (приоритет + статус) */}
                   <Flex justify='space-between' align='center' gap='12px'>
                     <Text fontSize='14px' color='text.primary' lineClamp={2}>
-                      {r.theme}
+                      {request.theme}
                     </Text>
 
                     <HStack gap='10px' flexShrink={0} align='center'>
                       <MyIcon
-                        name={pr.icon}
-                        size={pr.icon === 'arrowUp' ? '12px' : '14px'}
-                        color={pr.colorToken}
+                        name={priority.icon}
+                        size={priority.icon === 'arrowUp' ? '12px' : '14px'}
+                        color={priority.colorToken}
                       />
 
                       <Badge
@@ -151,19 +91,18 @@ export const RequestsMobileList = ({ data }: { data: Request[] }) => {
                         p='2px 6px'
                         fontSize='14px'
                         lineHeight='20px'
-                        {...statusBadgeProps(r.status)}
+                        {...getStatusBadgeProps(request.status, 'mobile')}
                       >
-                        {statusLabel[r.status]}
+                        {requestStatusLabel[request.status]}
                       </Badge>
                     </HStack>
                   </Flex>
 
-                  {/* 2 строка: ID-плашка + аптека + (иконка решения + время) */}
                   <Flex mt='16px' align='center' justify='space-between' gap='12px'>
                     <HStack gap='10px' minW={0}>
                       <Box bg='bg.number' borderRadius='4px' p='4px' flexShrink={0}>
                         <Text fontSize='14px' fontWeight='500' color='text.primary'>
-                          {r.id}
+                          {request.id}
                         </Text>
                       </Box>
 
@@ -172,20 +111,24 @@ export const RequestsMobileList = ({ data }: { data: Request[] }) => {
                         lineHeight='20px'
                         color='text.address'
                         lineClamp={1}
-                        opacity={r.pharmacyTitle ? 1 : 0.3}
+                        opacity={request.pharmacyTitle ? 1 : 0.3}
                       >
-                        {r.pharmacyTitle || '—'}
+                        {request.pharmacyTitle || '—'}
                       </Text>
                     </HStack>
 
                     <HStack gap='4px' flexShrink={0}>
-                      <MyIcon name={resolutionIcon} size='14px' color={resolutionColor} />
+                      <MyIcon
+                        name={resolutionView.icon}
+                        size='14px'
+                        color={resolutionView.color}
+                      />
                       <Text
                         fontSize='14px'
-                        color={r.resolution ? resolutionColor : 'text.primary'}
-                        opacity={r.resolution ? 1 : 0.3}
+                        color={request.resolution ? resolutionView.color : 'text.primary'}
+                        opacity={request.resolution ? 1 : 0.3}
                       >
-                        {r.resolution || '—'}
+                        {request.resolution || '—'}
                       </Text>
                     </HStack>
                   </Flex>

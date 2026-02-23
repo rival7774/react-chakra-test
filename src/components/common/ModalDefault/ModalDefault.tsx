@@ -1,3 +1,4 @@
+import { ButtonDefault } from '@/components/common/ButtonDefault/ButtonDefault'
 import {
   DialogBackdrop,
   DialogBody,
@@ -9,7 +10,6 @@ import {
   DialogTitle,
   HStack,
 } from '@chakra-ui/react'
-import { ButtonDefault } from '@/components/common/ButtonDefault/ButtonDefault'
 import React, { useEffect, useRef } from 'react'
 
 type RequestModalProps = {
@@ -66,7 +66,11 @@ export const DefaultModal = ({
           overflow='hidden'
         >
           <DialogHeader p={isMobile ? '0' : 0}>
-            <HStack justifyContent='space-between' minH='29px' w='100%'>
+            <HStack
+              justifyContent='space-between'
+              minH='29px'
+              w='100%'
+            >
               {isMobile ? (
                 <HStack
                   display='flex'
@@ -86,7 +90,11 @@ export const DefaultModal = ({
                     p='0'
                     bg='transparent'
                   />
-                  <DialogTitle fontSize='20px' lineHeight='24px' fontWeight='600'>
+                  <DialogTitle
+                    fontSize='20px'
+                    lineHeight='24px'
+                    fontWeight='600'
+                  >
                     {title}
                   </DialogTitle>
                 </HStack>
@@ -94,33 +102,38 @@ export const DefaultModal = ({
                 <>
                   <HStack
                     display='flex'
-                    alignItems='center'
+                    alignItems='start'
                     gap={2}
                     p={0}
                     fontSize='24px'
                     lineHeight='100%'
                     fontWeight='500'
                     flex={1}
+                    justify='space-between'
                   >
                     <DialogTitle mb='32px'>{title}</DialogTitle>
-                  </HStack>
 
-                  <ButtonDefault
-                    onClick={onClose}
-                    iconSize={18}
-                    iconName='cross'
-                    opacity='0.5'
-                    colorIcon='text.primary'
-                    p='0'
-                    bg='transparent'
-                    _hover={{ opacity: '0.3' }}
-                  />
+                    <ButtonDefault
+                      onClick={onClose}
+                      iconSize={18}
+                      iconName='cross'
+                      opacity='0.5'
+                      colorIcon='text.primary'
+                      p='0'
+                      bg='transparent'
+                      _hover={{ opacity: '0.3' }}
+                    />
+                  </HStack>
                 </>
               )}
             </HStack>
           </DialogHeader>
 
-          <DialogBody ref={bodyRef} p={0} position='relative'>
+          <DialogBody
+            ref={bodyRef}
+            p={0}
+            position='relative'
+          >
             {children}
           </DialogBody>
 
